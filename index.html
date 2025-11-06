@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOLANA</title>
+  <!-- Particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top left, #fff3e0 10%, #ffffff 80%);
+      color: #000;
+      overflow-x: hidden;
+      transition: opacity 0.6s, transform 0.6s;
+    }
+
+    /* Animación transición entre secciones */
+    body.fade-out {
+      opacity: 0;
+      transform: scale(1.05);
+    }
+
+    /* Estrellas fondo */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+
+    @keyframes aparecer {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    section, .hero, footer, header {
+      opacity: 0;
+      animation: aparecer 1s ease-out forwards;
+    }
+
+    header { animation-delay: 0.2s; }
+    .hero { animation-delay: 0.4s; }
+    #coleccion { animation-delay: 0.6s; }
+    #lanas { animation-delay: 0.8s; }
+    #maquinas { animation-delay: 1s; }
+    #servicios { animation-delay: 1.2s; }
+    #contacto { animation-delay: 1.4s; }
+    footer { animation-delay: 1.6s; }
+
+    header {
+      background-color: #fff;
+      padding: 15px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid #ff5722;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ff5722;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff9800;
+    }
+
+    .nav-icons {
+      display: flex;
+      gap: 15px;
+      margin-left: 20px;
+    }
+
+    .nav-icons a {
+      position: relative;
+      font-size: 1.2em;
+      color: #ff5722;
+      transition: color 0.3s;
+    }
+
+    .nav-icons a:hover {
+      color: #ff9800;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #e64a19;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal de Login */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .close:hover {
+      color: #333;
+    }
+
+    .modal h2 {
+      color: #e64a19;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .modal input {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .modal button {
+      background-color: #e64a19;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+
+    .modal button:hover {
+      background-color: #ff5722;
+    }
+
+    .modal-links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .modal-links a {
+      color: #e64a19;
+      text-decoration: none;
+    }
+
+    .modal-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Carrito de Compras */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background-color: white;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      z-index: 2000;
+      transition: right 0.3s ease;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.active {
+      right: 0;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .cart-header h3 {
+      color: #e64a19;
+    }
+
+    .close-cart {
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .close-cart:hover {
+      color: #333;
+    }
+
+    .cart-items {
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-price {
+      color: #e64a19;
+      font-weight: bold;
+    }
+
+    .cart-item-quantity {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+
+    .cart-item-quantity button {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cart-item-quantity span {
+      margin: 0 10px;
+    }
+
+    .cart-total {
+      font-weight: bold;
+      font-size: 1.2em;
+      text-align: right;
+      margin: 20px 0;
+      color: #e64a19;
+    }
+
+    .checkout-btn {
+      background-color: #e64a19;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background-color: #ff5722;
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #ff5722, #ff9800);
+      color: white;
+      padding: 80px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero .left h1 {
+      font-size: 3em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .hero .left p {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .hero .right {
+      max-width: 600px;
+      margin-top: 20px;
+    }
+
+    .hero .right p {
+      font-size: 1em;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .slogan {
+      font-style: italic;
+      font-weight: bold;
+      color: #ffe0b2;
+    }
+
+    section {
+      padding: 60px 40px;
+    }
+
+    section h2 {
+      font-size: 2.5em;
+      color: #d84315;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      position: relative;
+      background-color: #fff3e0;
+      border: 3px solid #ff5722;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -6px; left: -6px; right: -6px; bottom: -6px;
+      border: 2px dashed #e64a19; /* simula patrón textil */
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    .card h3 {
+      text-align: center;
+      color: #e64a19;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin-bottom: 15px;
+    }
+
+    .add-to-cart {
+      background-color: #e64a19;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+
+    .add-to-cart:hover {
+      background-color: #ff5722;
+    }
+
+    .contacto {
+      background-color: #ffccbc;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .contacto p {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background-color: #ff5722;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .nav-icons {
+        margin-left: 0;
+      }
+      
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Estrellas animadas -->
+  <div id="particles-js"></div>
+
+  <!-- ENCABEZADO -->
+  <header>
+    <div class="logo">
+       <img src="https://branition.com/assets/img/users/logos/2158-haorKQJ.webp" alt="Logo Telar" style="height: 50px; vertical-align: middle; margin-right: 10px;">
+  <span>SOLANA</span>
+    </div>
+    <nav>
+      <a href="#inicio">INICIO</a>
+      <a href="#coleccion">COLECCIÓN</a>
+      <a href="#lanas">LANAS</a>
+      <a href="#maquinas">MÁQUINAS</a>
+      <a href="#servicios">SERVICIOS</a>
+      <a href="#produccion">PRODUCCIÓN</a>
+      <a href="#contacto">CONTÁCTANOS</a>
+      
+      <div class="nav-icons">
+        <a href="#" id="cart-btn">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count">0</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Modal de Registro -->
+  <div id="register-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Crear Cuenta</h2>
+      <form id="register-form">
+        <input type="text" placeholder="Nombre completo" required>
+        <input type="email" placeholder="Correo electrónico" required>
+        <input type="password" placeholder="Contraseña" required>
+        <input type="password" placeholder="Confirmar contraseña" required>
+         <input type="number" placeholder="Colocar número" required>
+        <button type="submit">Registrarse</button>
+      </form>
+      <div class="modal-links">
+        <p>¿Ya tienes cuenta? <a href="#" id="login-link">Inicia sesión aquí</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrito de Compras -->
+  <div class="cart-sidebar">
+    <div class="cart-header">
+      <h3>Tu Carrito</h3>
+      <span class="close-cart">&times;</span>
+    </div>
+    <div class="cart-items">
+      <!-- Los productos se agregarán aquí dinámicamente -->
+      <div class="empty-cart">
+        <p>Tu carrito está vacío</p>
+      </div>
+    </div>
+    <div class="cart-total">
+      Total: S/ 0.00
+    </div>
+    <button class="checkout-btn">Proceder al Pago</button>
+  </div>
+
+  <!-- INICIO -->
+  <section class="hero" id="inicio">
+    <div class="left">
+      <h1>¡BIENVENIDOS!</h1>
+      <p>A donde los hilos del pasado tejen el futuro.</p>
+    </div>
+    <div class="right">
+      <p>Sumérgete en el arte milenario del tejido andino. En INTERES TELAR celebramos la riqueza cultural de los Andes a través de textiles auténticos, elaborados por manos expertas que preservan técnicas ancestrales. Aquí encontrarás historia, tradición y diseño unidos en cada fibra.</p>
+      <p>Explora nuestras colecciones y descubre cómo cada pieza cuenta una historia única.</p>
+      <p class="slogan">Textiles que conectan generaciones. Arte que trasciende fronteras.</p>
+    </div>
+  </section>
+
+  <!-- COLECCIÓN -->
+  <section id="coleccion">
+  <h2>COLECCIÓN</h2>
+  <div class="grid">
+    <div class="card" style="text-align: justify;">
+      <img src="https://media.istockphoto.com/id/1509537665/es/foto/vista-de-coloridas-telas-mayas-ind%C3%ADgenas-con-diferentes-patrones-en-el-mercado-en.jpg?s=612x612&w=0&k=20&c=nRmW7W9zYDkv65Xt48BYvKEAXyiB5LofcGmDz_wd0_A=" alt="Tejidos Tradicionales" width="100%" style="border-radius: 10px;">
+      <h3>TEJIDOS TRADICIONALES</h3>
+      <p>Piezas elaboradas con técnicas ancestrales que transmiten la herencia cultural andina y su simbología.
+         Cada tejido refleja la conexión espiritual con la tierra y la identidad de las comunidades.</p>
+      <button class="add-to-cart" data-id="1" data-name="Tejidos Tradicionales" data-price="120.00">Agregar al Carrito - S/ 120.00</button>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://www.educaciontrespuntocero.com/cursos/wp-content/uploads/2022/06/Cursos-diseno-tejidos.jpg" alt="Textiles Modernos" width="100%" style="border-radius: 10px;">
+      <h3>TEXTILES MODERNOS </h3>
+      <p>Diseños actuales que fusionan estilo urbano con técnicas tradicionales. Ideales para quienes buscan autenticidad y moda.</p>
+      <button class="add-to-cart" data-id="2" data-name="Textiles Modernos" data-price="95.00">Agregar al Carrito - S/ 95.00</button>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://salon-cprint.es/app/uploads/2020/01/Roland-Tshirt.jpg" alt="Ediciones Limitadas" width="100%" style="border-radius: 10px;">
+      <h3>EDICIONES LIMITADAS</h3>
+      <p>Piezas únicas tejidas a mano por artesanos en series exclusivas. Arte textil irrepetible con valor cultural.</p>
+      <button class="add-to-cart" data-id="3" data-name="Ediciones Limitadas" data-price="180.00">Agregar al Carrito - S/ 180.00</button>
+    </div>
+  </div>
+</section>
+
+  <!-- LANAS -->
+ <section id="lanas">
+  <h2>LANAS</h2>
+  <div class="grid">
+    <div class="card" style="text-align: justify;">
+      <img src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/file-uploads/blogs/2147507051/images/04f25f7-cdee-105-f8ad-127e2bb73d68_pelos-alpaca.jpeg" alt="Lana de Alpaca" width="100%" style="border-radius: 10px;">
+      <h3>LANA DE ALPACA</h3>
+      <p>Fibra de lujo suave, cálida y resistente. Ideal para prendas duraderas y de alta calidad. Producción ética en zonas altoandinas.</p>
+      <button class="add-to-cart" data-id="4" data-name="Lana de Alpaca" data-price="45.00">Agregar al Carrito - S/ 45.00</button>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-zCotYX7AelU2u8yipB94P-oL4-Y8x7-X2w&s" alt="Lana de Oveja" width="100%" style="border-radius: 10px;">
+      <h3>LANA DE OVEJA</h3>
+      <p>Material versátil y cálido, ideal para mantas, gorros y abrigos. Respetuosa con el medio ambiente y muy duradera.</p>
+      <button class="add-to-cart" data-id="5" data-name="Lana de Oveja" data-price="35.00">Agregar al Carrito - S/ 35.00</button>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://fibercord.net/wp-content/uploads/2022/05/canamo.jpg" alt="Hilos Naturales" width="100%" style="border-radius: 10px;">
+      <h3>HILOS NATURALES</h3>
+      <p>Fibras teñidas con pigmentos como cochinilla, nogal e índigo. Ecológicos, suaves, y seguros para pieles sensibles.</p>
+      <button class="add-to-cart" data-id="6" data-name="Hilos Naturales" data-price="28.00">Agregar al Carrito - S/ 28.00</button>
+    </div>
+  </div>
+</section>
+
+  <!-- MÁQUINAS -->
+  <section id="maquinas">
+  <h2>MÁQUINAS</h2>
+  <div class="grid">
+    <div class="card" style="text-align: justify;">
+      <img src="https://apttperu.com/wp-content/uploads/2023/05/aptt-nuevas-tecnologias-05.jpg" alt="Telares Manuales" width="100%" style="border-radius: 10px;">
+      <h3>TELARES MANUALES</h3>
+      <p>Herramientas tradicionales usadas por generaciones para crear tejidos con dedicación y detalle artesanal único.</p>
+      <button class="add-to-cart" data-id="7" data-name="Telar Manual" data-price="350.00">Agregar al Carrito - S/ 350.00</button>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://img.baba-blog.com/2024/02/how-to-select-suitable-weaving-machines_00.jpg?x-oss-process=style%2Ffull" alt="Telares Industriales" width="100%" style="border-radius: 10px;">
+      <h3>TELARES INDUSTRIALES</h3>
+      <p>Equipos modernos que optimizan procesos sin perder la calidad del tejido. Ideales para grandes volúmenes.</p>
+      <button class="add-to-cart" data-id="8" data-name="Telar Industrial" data-price="1200.00">Agregar al Carrito - S/ 1200.00</button>
+    </div>
+  </div>
+</section>
+
+  <!-- SERVICIOS -->
+   <section id="servicios">
+  <h2>NUESTROS SERVICIOS</h2>
+  <div class="grid">
+    <div class="card" style="text-align: justify;">
+      <img src="https://www.playerasmark.com/woo_mark/assets/media/2018/03/proceso-diseno-textil.jpg" alt="Diseño Personalizado" width="100%" style="border-radius: 10px;">
+      <h3>DISEÑO PERSONALIZADO</h3>
+      <p>Solicita piezas únicas inspiradas en tus ideas, con diseños andinos adaptados a tu estilo.</p>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://s3.amazonaws.com/wpmedia-ikarus-2018/serigrafia/wp-content/uploads/2022/09/01-ikarus-005.jpg" alt="Talleres y Cursos" width="100%" style="border-radius: 10px;">
+      <h3>TALLERES Y CURSOS</h3>
+      <p>Capacitaciones presenciales y virtuales sobre técnicas tradicionales para todos los niveles.</p>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://imgmedia.larepublica.pe/640x371/larepublica/original/2020/09/13/602316de28084061da4e2a00.webp" alt="Envíos Internacionales" width="100%" style="border-radius: 10px;">
+      <h3>ENVIOS INTERNACIONALES</h3>
+      <p>Enviamos a todo el mundo con empaques seguros y seguimiento. Recibe un pedacito de los Andes en tu hogar.</p>
+    </div>
+  </div>
+</section>
+
+  <!-- PRODUCCIÓN -->
+  <section id="produccion">
+  <h2>PRODUCCIÓN</h2>
+  <div class="grid">
+    <div class="card" style="text-align: justify;">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSh6NiLkaY1-JY4oqtAs3oPYPRPTyFRakZhg&s" alt="Procesado de Lana" width="100%" style="border-radius: 10px;">
+      <h3>PROCESADO DE LANA CRUDA</h3>
+      <p>Recolectamos, clasificamos y lavamos fibras naturales con procesos sostenibles.</p>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://sp-ao.shortpixel.ai/client/to_auto,q_lossy,ret_img,w_410,h_330/https://chicbarcelona.es/wp-content/uploads/2021/11/ejemplo-de-rueca-con-pedal-e1636463981442.jpg" alt="Hilado Artesanal" width="100%" style="border-radius: 10px;">
+      <h3>HILADO ARTESANAL Y SEMIINDUSTRIAL</h3>
+      <p>Transformamos la lana en hilos con ruecas y máquinas semiindustriales sin perder calidad artesanal.</p>
+    </div>
+    <div class="card" style="text-align: justify;">
+      <img src="https://images.ctfassets.net/0c6y4qslwvqw/2syKE8aHUCqoV4bBZeOTiZ/e837df3a53326a5b2b8476c6456f6dda/QIMA_inspector_-_colour_check_inspection.jpg?fm=jpg&q=60&w=1000" alt="Control de Calidad" width="100%" style="border-radius: 10px;">
+      <h3>CONTROL DE CALIDAD</h3>
+      <p>Cada pieza es inspeccionada minuciosamente para asegurar acabados perfectos y duraderos.</p>
+    </div>
+  </div>
+</section>
+
+  <!-- CONTACTO -->
+<section id="contacto" style="background: linear-gradient(to bottom right, #ffe0db, #ffd5cb); padding: 60px 20px; font-family: 'Segoe UI', sans-serif;">
+  <div style="max-width: 1100px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; gap: 40px;">
+    
+    <!-- Lado izquierdo: Información + formulario -->
+    <div style="flex: 1 1 500px; min-width: 300px;">
+      <h2 style="color: #e64a19; font-size: 2em; margin-bottom: 10px;">CONTÁCTANOS</h2>
+      <p style="margin-bottom: 25px; color: #555;">¿Tienes alguna duda o sugerencia? ¡Estamos para ayudarte!</p>
+
+      <p><strong>G-Mail:</strong><br> it.andeantextiles@gmail.com</p>
+      <p><strong>Teléfono:</strong><br> +51 999 335 525</p>
+      <p><strong>Ubicación:</strong><br> Ayacucho, Perú</p>
+      <p><strong>Horario:</strong><br> Lunes a Viernes, 9 a.m. a 6 p.m.</p>
+
+      <div style="margin: 20px 0;">
+        <a href="https://www.facebook.com" target="_blank" style="margin-right: 10px; color: #3b5998; text-decoration: none;">Facebook</a>
+        <a href="https://www.instagram.com" target="_blank" style="margin-right: 10px; color: #C13584; text-decoration: none;">Instagram</a>
+        <a href="https://wa.me/51999335525" target="_blank" style="color: #25D366; text-decoration: none;">WhatsApp</a>
+      </div>
+
+      <form id="formulario-contacto">
+        <label for="nombre" style="font-weight: bold;">Apellidos y Nombres</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre completo" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
+
+        <label for="email" style="font-weight: bold;">Correo Electrónico</label>
+        <input type="email" id="email" name="email" required placeholder="tucorreo@ejemplo.com" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
+
+        <label for="mensaje" style="font-weight: bold;">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" rows="4" required placeholder="Escribe tu mensaje aquí..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+
+        <button type="submit" style="margin-top: 20px; width: 100%; background-color: #e64a19; color: white; padding: 12px; font-size: 1em; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s;">
+          Enviar Mensaje
+        </button>
+        <p id="mensaje-confirmacion" style="margin-top: 10px; color: green; display: none;">¡Gracias por contactarnos! Te responderemos pronto.</p>
+      </form>
+    </div>
+
+    <!-- Lado derecho: Imagen -->
+    <div style="flex: 1 1 400px; min-width: 250px; display: flex; align-items: center; justify-content: center;">
+      <img src="https://images.unsplash.com/photo-1572297982753-48c028401d18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80" alt="Telar Andino" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    </div>
+  </div>
+
+  <!-- Mapa -->
+  <div style="max-width: 1100px; margin: 40px auto 0; border-radius: 10px; overflow: hidden;">
+    <iframe src="https://www.google.com/maps?q=Ayacucho,Peru&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen></iframe>
+  </div>
+</section>
+
+<footer style="text-align: center; padding: 20px; background: #e64a19; color: white; font-size: 0.9em;">
+  &copy; 2025 INTERES TELAR ANDEAN TEXTILES. Todos los derechos reservados.
+</footer>
+
+<script>
+  // Variables globales
+  let cart = [];
+  
+  // Elementos del DOM
+  const cartBtn = document.getElementById('cart-btn');
+  const registerModal = document.getElementById('register-modal');
+  const cartSidebar = document.querySelector('.cart-sidebar');
+  const closeButtons = document.querySelectorAll('.close, .close-cart');
+  const registerLink = document.getElementById('register-link');
+  const addToCartButtons = document.querySelectorAll('.add-to-cart');
+  const cartCount = document.querySelector('.cart-count');
+  const cartItems = document.querySelector('.cart-items');
+  const cartTotal = document.querySelector('.cart-total');
+  const checkoutBtn = document.querySelector('.checkout-btn');
+  
+  // Funciones para abrir modales
+  loginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginModal.style.display = 'block';
+  });
+  
+  cartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    cartSidebar.classList.add('active');
+  });
+  
+  // Funciones para cerrar modales
+  closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      loginModal.style.display = 'none';
+      registerModal.style.display = 'none';
+      cartSidebar.classList.remove('active');
+    });
+  });
+  
+  // Cambiar entre login y registro
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    registerModal.style.display = 'none';
+    loginModal.style.display = 'block';
+  });
+  
+  registerLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginModal.style.display = 'none';
+    registerModal.style.display = 'block';
+  });
+  
+  // Cerrar modales al hacer clic fuera
+  window.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+      loginModal.style.display = 'none';
+    }
+    if (e.target === registerModal) {
+      registerModal.style.display = 'none';
+    }
+  });
+  
+  // Funcionalidad del carrito
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const id = button.getAttribute('data-id');
+      const name = button.getAttribute('data-name');
+      const price = parseFloat(button.getAttribute('data-price'));
+      const image = button.parentElement.querySelector('img').src;
+      
+      // Verificar si el producto ya está en el carrito
+      const existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id,
+          name,
+          price,
+          image,
+          quantity: 1
+        });
+      }
+      
+      updateCart();
+      showNotification(`${name} agregado al carrito`);
+    });
+  });
+  
+  // Actualizar carrito
+  function updateCart() {
+    // Actualizar contador
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCount.textContent = totalItems;
+    
+    // Actualizar lista de productos
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
+    } else {
+      cartItems.innerHTML = '';
+      cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-details">
+            <div class="cart-item-title">${item.name}</div>
+            <div class="cart-item-price">S/ ${item.price.toFixed(2)}</div>
+            <div class="cart-item-quantity">
+              <button class="decrease-quantity" data-id="${item.id}">-</button>
+              <span>${item.quantity}</span>
+              <button class="increase-quantity" data-id="${item.id}">+</button>
+            </div>
+          </div>
+        `;
+        cartItems.appendChild(cartItem);
+      });
+      
+      // Agregar event listeners para los botones de cantidad
+      document.querySelectorAll('.decrease-quantity').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-id');
+          const item = cart.find(item => item.id === id);
+          if (item.quantity > 1) {
+            item.quantity -= 1;
+          } else {
+            cart = cart.filter(item => item.id !== id);
+          }
+          updateCart();
+        });
+      });
+      
+      document.querySelectorAll('.increase-quantity').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-id');
+          const item = cart.find(item => item.id === id);
+          item.quantity += 1;
+          updateCart();
+        });
+      });
+    }
+    
+    // Actualizar total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    cartTotal.textContent = `Total: S/ ${total.toFixed(2)}`;
+  }
+  
+  // Mostrar notificación
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      z-index: 3000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      animation: slideInRight 0.3s, slideOutRight 0.3s 2s forwards;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      document.body.removeChild(notification);
+    }, 2300);
+  }
+  
+  // Procesar pago
+  checkoutBtn.addEventListener('click', () => {
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío');
+      return;
+    }
+    
+    alert('¡Gracias por tu compra! Serás redirigido al proceso de pago.');
+    // Aquí normalmente redirigirías a una página de pago
+    cart = [];
+    updateCart();
+    cartSidebar.classList.remove('active');
+  });
+  
+  // Formulario de contacto
+  const formulario = document.getElementById('formulario-contacto');
+  const confirmacion = document.getElementById('mensaje-confirmacion');
+
+  formulario.addEventListener('submit', function(e) {
+    e.preventDefault();
+    confirmacion.style.display = 'block';
+    formulario.reset();
+  });
+
+  // Partículas + efecto de color con scroll
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 60, density: { enable: true, value_area: 800 } },
+      color: { value: "#ffffff" },
+      shape: { type: "circle" },
+      opacity: { value: 0.4 },
+      size: { value: 3 },
+      move: { enable: true, speed: 1.5 }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: { enable: true, mode: "repulse" }
+      },
+      modes: {
+        repulse: { distance: 100 }
+      }
+    },
+    retina_detect: true
+  });
+
+  // Cambiar color de partículas con scroll
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    let color = "#ffffff";
+    if (scrollY > 100 && scrollY < 400) color = "#ffe0b2";
+    else if (scrollY >= 400 && scrollY < 800) color = "#ff9800";
+    else if (scrollY >= 800) color = "#ff5722";
+
+    if (window.pJSDom && window.pJSDom[0]) {
+      window.pJSDom[0].pJS.particles.color.value = color;
+      window.pJSDom[0].pJS.fn.particlesRefresh();
+    }
+  });
+
+  // Transición entre secciones
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth' });
+          document.body.classList.remove('fade-out');
+        }, 400);
+      }
+    });
+  });
+</script>
+
+<!-- 🔸 Ventana emergente para código de país, número y red social -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h2>Bienvenido</h2>
+    <p>Por favor, ingresa tu código de país, número y una red social de referencia:</p>
+
+    <!-- Selector pequeño + número al costado -->
+    <div class="phone-group">
+      <select id="codigo-pais" required>
+        <option value="">País</option>
+        <option value="+51">🇵🇪 +51</option>
+        <option value="+54">🇦🇷 +54</option>
+        <option value="+56">🇨🇱 +56</option>
+        <option value="+57">🇨🇴 +57</option>
+        <option value="+58">🇻🇪 +58</option>
+        <option value="+52">🇲🇽 +52</option>
+        <option value="+1">🇺🇸 +1</option>
+        <option value="+34">🇪🇸 +34</option>
+      </select>
+
+      <input type="text" id="numero" placeholder="Número" maxlength="15" required />
+    </div>
+
+    <input type="text" id="redsocial" placeholder="Ejemplo: @miusuario o enlace" required />
+    <button id="entrar-btn">Entrar</button>
+  </div>
+</div>
+
+<style>
+  /* --- VENTANA EMERGENTE --- */
+  .popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+  }
+
+  .popup-content {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 45px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    width: 90%;
+    max-width: 460px;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  .popup-content h2 {
+    color: #e64a19;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+  }
+
+  .popup-content p {
+    font-size: 1.05em;
+    color: #444;
+    margin-bottom: 20px;
+  }
+
+  /* Contenedor país + número */
+  .phone-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .phone-group select {
+    width: 35%;
+    padding: 12px;
+    border: 2px solid #ff5722;
+    border-radius: 8px;
+    font-size: 1.1em;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+  }
+
+  .phone-group input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ff5722;
+    border-radius: 8px;
+    font-size: 1.1em;
+  }
+
+  .popup-content input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: 2px solid #ff5722;
+    border-radius: 8px;
+    font-size: 1.1em;
+    background-color: #fff;
+    color: #333;
+  }
+
+  .popup-content button {
+    background-color: #e64a19;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .popup-content button:hover {
+    background-color: #ff9800;
+    transform: scale(1.05);
+  }
+</style>
+
+<script>
+  const popup = document.getElementById('popup');
+  const entrarBtn = document.getElementById('entrar-btn');
+  const numeroInput = document.getElementById('numero');
+  const redsocialInput = document.getElementById('redsocial');
+  const codigoInput = document.getElementById('codigo-pais');
+
+  // Función para validar y cerrar el popup
+  function validarYEntrar() {
+    const codigoPais = codigoInput.value.trim();
+    const numero = numeroInput.value.trim();
+    const redsocial = redsocialInput.value.trim();
+
+    if (codigoPais !== "" && numero !== "" && redsocial !== "") {
+      popup.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    } else {
+      alert("⚠️ Por favor, completa todos los campos antes de continuar.");
+    }
+  }
+
+  // Clic en botón
+  entrarBtn.addEventListener('click', validarYEntrar);
+
+  // Tecla Enter en cualquier campo
+  [numeroInput, redsocialInput, codigoInput].forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        validarYEntrar();
+      }
+    });
+  });
+
+  // Mostrar popup al cargar y bloquear scroll
+  window.addEventListener('load', () => {
+    popup.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  });
+</script>
+
+</body>
+</html>
