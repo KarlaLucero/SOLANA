@@ -1297,7 +1297,9 @@ updateCart();
   // Finalizar pago
   function finalizePayment() {
     alert("¡Pago realizado con éxito! Gracias por confiar en SOLANA");
-    closePaymentModal();
+    cart = [];
+    updateCart();
+    document.getElementById("payment-modal").style.display = "none";
   }
 </script>
 
