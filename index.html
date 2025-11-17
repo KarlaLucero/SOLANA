@@ -567,7 +567,7 @@
     <div class="cart-total">
       Total: S/ 0.00
     </div>
-    <button class="checkout-btn">Proceder al Pago</button>
+    <button class="checkout-btn" onclick="openPaymentModal()">Proceder al Pago</button>
   </div>
 
   <!-- INICIO -->
@@ -751,21 +751,7 @@
 </footer>
 
 <script>
-  // Variables globales
-  let cart = [];
-  
-  // Elementos del DOM
-  const cartBtn = document.getElementById('cart-btn');
-  const registerModal = document.getElementById('register-modal');
-  const cartSidebar = document.querySelector('.cart-sidebar');
-  const closeButtons = document.querySelectorAll('.close, .close-cart');
-  const registerLink = document.getElementById('register-link');
-  const addToCartButtons = document.querySelectorAll('.add-to-cart');
-  const cartCount = document.querySelector('.cart-count');
-  const cartItems = document.querySelector('.cart-items');
-  const cartTotal = document.querySelector('.cart-total');
-  const checkoutBtn = document.querySelector('.checkout-btn');
-  
+
   // Funciones para abrir modales
   loginBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -809,140 +795,6 @@
     }
   });
   
-  // Funcionalidad del carrito
-  addToCartButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const id = button.getAttribute('data-id');
-      const name = button.getAttribute('data-name');
-      const price = parseFloat(button.getAttribute('data-price'));
-      const image = button.parentElement.querySelector('img').src;
-      
-      // Verificar si el producto ya está en el carrito
-      const existingItem = cart.find(item => item.id === id);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id,
-          name,
-          price,
-          image,
-          quantity: 1
-        });
-      }
-      
-      updateCart();
-      showNotification(`${name} agregado al carrito`);
-    });
-  });
-  
-  // Actualizar carrito
-  function updateCart() {
-    // Actualizar contador
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCount.textContent = totalItems;
-    
-    // Actualizar lista de productos
-    if (cart.length === 0) {
-      cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
-    } else {
-      cartItems.innerHTML = '';
-      cart.forEach(item => {
-        const cartItem = document.createElement('div');
-        cartItem.className = 'cart-item';
-        cartItem.innerHTML = `
-          <img src="${item.image}" alt="${item.name}">
-          <div class="cart-item-details">
-            <div class="cart-item-title">${item.name}</div>
-            <div class="cart-item-price">S/ ${item.price.toFixed(2)}</div>
-            <div class="cart-item-quantity">
-              <button class="decrease-quantity" data-id="${item.id}">-</button>
-              <span>${item.quantity}</span>
-              <button class="increase-quantity" data-id="${item.id}">+</button>
-            </div>
-          </div>
-        `;
-        cartItems.appendChild(cartItem);
-      });
-      
-      // Agregar event listeners para los botones de cantidad
-      document.querySelectorAll('.decrease-quantity').forEach(button => {
-        button.addEventListener('click', () => {
-          const id = button.getAttribute('data-id');
-          const item = cart.find(item => item.id === id);
-          if (item.quantity > 1) {
-            item.quantity -= 1;
-          } else {
-            cart = cart.filter(item => item.id !== id);
-          }
-          updateCart();
-        });
-      });
-      
-      document.querySelectorAll('.increase-quantity').forEach(button => {
-        button.addEventListener('click', () => {
-          const id = button.getAttribute('data-id');
-          const item = cart.find(item => item.id === id);
-          item.quantity += 1;
-          updateCart();
-        });
-      });
-    }
-    
-    // Actualizar total
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    cartTotal.textContent = `Total: S/ ${total.toFixed(2)}`;
-  }
-  
-  // Mostrar notificación
-  function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #4CAF50;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 5px;
-      z-index: 3000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      animation: slideInRight 0.3s, slideOutRight 0.3s 2s forwards;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      document.body.removeChild(notification);
-    }, 2300);
-  }
-  
-  // Procesar pago
-  checkoutBtn.addEventListener('click', () => {
-    if (cart.length === 0) {
-      alert('Tu carrito está vacío');
-      return;
-    }
-    
-    alert('¡Gracias por tu compra! Serás redirigido al proceso de pago.');
-    // Aquí normalmente redirigirías a una página de pago
-    cart = [];
-    updateCart();
-    cartSidebar.classList.remove('active');
-  });
-  
-  // Formulario de contacto
-  const formulario = document.getElementById('formulario-contacto');
-  const confirmacion = document.getElementById('mensaje-confirmacion');
-
-  formulario.addEventListener('submit', function(e) {
-    e.preventDefault();
-    confirmacion.style.display = 'block';
-    formulario.reset();
-  });
-
   // Partículas + efecto de color con scroll
   particlesJS("particles-js", {
     particles: {
@@ -1159,5 +1011,296 @@
   });
 </script>
 
+<script>
+/* ----------------------------
+   SCRIPT DEL CARRITO (robusto)
+   ---------------------------- */
+
+// Selectores (con comprobaciones)
+const addToCartButtons = document.querySelectorAll('.add-to-cart');
+const cartBtn = document.getElementById('cart-btn');
+const cartSidebar = document.querySelector('.cart-sidebar');
+const closeCartBtn = document.querySelector('.close-cart');
+const cartCount = document.querySelector('.cart-count');
+const cartItems = document.querySelector('.cart-items');
+const cartTotal = document.querySelector('.cart-total');
+const checkoutBtn = document.querySelector('.checkout-btn');
+
+// Modales / login (si existen en tu HTML)
+const registerModal = document.getElementById('register-modal');
+const loginModal = document.getElementById('login-modal'); // puede no existir
+const loginBtn = document.getElementById('login-btn');     // puede no existir
+const loginLink = document.getElementById('login-link');   // en tu HTML sí existe el login-link
+const registerLink = document.getElementById('register-link'); // en tu HTML definiste register-modal, register-link
+
+// Estado del carrito
+let cart = [];
+
+// Función: mostrar notificación temporal
+function showNotification(message, success = true) {
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: ${success ? '#4CAF50' : '#e74c3c'};
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    z-index: 9999;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    font-weight: 600;
+  `;
+  document.body.appendChild(notification);
+  setTimeout(() => notification.remove(), 2000);
+}
+
+// ABRIR / CERRAR carrito (si existen botones)
+if (cartBtn && cartSidebar) {
+  cartBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    cartSidebar.classList.add('active');
+  });
+}
+if (closeCartBtn && cartSidebar) {
+  closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
+}
+
+// Si hace falta cerrar el carrito al hacer clic fuera (opcional)
+// window.addEventListener('click', (e) => {
+//   if (e.target === cartSidebar) cartSidebar.classList.remove('active');
+//});
+
+// Agregar al carrito: attach listeners sólo si botones existen
+if (addToCartButtons && addToCartButtons.length > 0) {
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const id = button.getAttribute('data-id');
+      const name = button.getAttribute('data-name') || 'Producto';
+      const price = parseFloat(button.getAttribute('data-price')) || 0;
+      // busca imagen dentro de la card; si no hay, usar placeholder
+      let image = '';
+      const possibleImg = button.parentElement ? button.parentElement.querySelector('img') : null;
+      image = possibleImg ? possibleImg.src : 'https://via.placeholder.com/70';
+
+      // comprobar existencia en carrito (ids como strings)
+      const existing = cart.find(item => String(item.id) === String(id));
+      if (existing) existing.quantity += 1;
+      else cart.push({ id: String(id), name, price, image, quantity: 1 });
+
+      updateCart();
+      showNotification(`${name} agregado al carrito`);
+    });
+  });
+}
+
+// Actualizar carrito: render y total
+function updateCart() {
+  // seguridad: si no existen elementos en DOM, salir
+  if (!cartItems || !cartCount || !cartTotal) return;
+
+  // contador
+  const totalItems = cart.reduce((s, it) => s + it.quantity, 0);
+  cartCount.textContent = totalItems;
+
+  // render items
+  if (cart.length === 0) {
+    cartItems.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
+  } else {
+    cartItems.innerHTML = '';
+    cart.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="cart-item-details">
+          <div class="cart-item-title">${item.name}</div>
+          <div class="cart-item-price">S/ ${item.price.toFixed(2)}</div>
+          <div class="cart-item-quantity">
+            <button class="decrease-quantity" data-id="${item.id}">-</button>
+            <span class="qty">${item.quantity}</span>
+            <button class="increase-quantity" data-id="${item.id}">+</button>
+          </div>
+        </div>
+      `;
+      cartItems.appendChild(div);
+    });
+
+    // listeners para botones + y - (delegación simple)
+    cartItems.querySelectorAll('.decrease-quantity').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+        const it = cart.find(x => x.id === id);
+        if (!it) return;
+        it.quantity--;
+        if (it.quantity <= 0) cart = cart.filter(x => x.id !== id);
+        updateCart();
+      };
+    });
+    cartItems.querySelectorAll('.increase-quantity').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+        const it = cart.find(x => x.id === id);
+        if (!it) return;
+        it.quantity++;
+        updateCart();
+      };
+    });
+  }
+
+  // total
+  const total = cart.reduce((s, it) => s + it.price * it.quantity, 0);
+  cartTotal.textContent = `Total: S/ ${total.toFixed(2)}`;
+}
+
+// Checkout: comprobar existencia
+if (checkoutBtn) {
+  checkoutBtn.addEventListener('click', () => {
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío');
+      return;
+    }
+
+  });
+} else {
+  // si no existe checkoutBtn, evitar errores futuros
+  console.warn('checkoutBtn no encontrado: botón .checkout-btn ausente en DOM');
+}
+
+/* ----------------------------
+   Manejo de modales (seguro)
+   ---------------------------- */
+if (loginBtn && loginModal) {
+  loginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginModal.style.display = 'block';
+  });
+}
+
+// Si existen enlaces para alternar entre login y registro, conectarlos (si existen)
+if (loginLink) {
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (registerModal) registerModal.style.display = 'none';
+    if (loginModal) loginModal.style.display = 'block';
+  });
+}
+if (registerLink) {
+  registerLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (loginModal) loginModal.style.display = 'none';
+    if (registerModal) registerModal.style.display = 'block';
+  });
+}
+
+// Cerrar modales con ".close" o ".close-cart": busca todos y oculta modales y carrito
+document.querySelectorAll('.close').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (loginModal) loginModal.style.display = 'none';
+    if (registerModal) registerModal.style.display = 'none';
+    if (cartSidebar) cartSidebar.classList.remove('active');
+  });
+});
+
+// Cerrar modales si el usuario hace clic fuera (seguro)
+window.addEventListener('click', (e) => {
+  if (e.target === loginModal) loginModal.style.display = 'none';
+  if (e.target === registerModal) registerModal.style.display = 'none';
+});
+
+// Inicializar render (por si hay items en localStorage más adelante)
+updateCart();
+</script>
+
+<!-- ------------------------ MODAL DE PAGO ------------------------ -->
+<div id="paymentModal" class="payment-modal" style="
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); display: none; justify-content: center;
+    align-items: center; z-index: 9999;
+">
+  <div style="
+      background: #fff; width: 400px; padding: 25px; border-radius: 15px;
+      box-shadow: 0 0 10px #0002; position: relative;
+  ">
+    <h2 style="text-align:center; margin-top:0;">Método de Pago</h2>
+
+    <!-- Cerrar -->
+    <span onclick="closePaymentModal()" style="
+        position:absolute; top:10px; right:15px; cursor:pointer;
+        font-size: 20px; font-weight: bold;">×</span>
+
+    <!-- Selección de método -->
+    <label style="font-weight:bold;">Seleccione una opción:</label>
+    <select id="paymentMethod" onchange="togglePaymentMethod()" style="
+        width:100%; padding:8px; margin:10px 0 20px 0; border-radius:8px;">
+      <option value="card">Tarjeta</option>
+      <option value="yape">Yape (QR)</option>
+    </select>
+
+    <!-- ---------------- FORMULARIO TARJETA ---------------- -->
+    <div id="cardForm">
+      <label>Número de tarjeta:</label>
+      <input type="text" placeholder="xxxx xxxx xxxx xxxx" style="width:100%; padding:8px; border-radius:8px;"><br><br>
+
+      <label>Nombre:</label>
+      <input type="text" placeholder="Como aparece en la tarjeta" style="width:100%; padding:8px; border-radius:8px;"><br><br>
+
+      <div style="display:flex; gap:10px;">
+        <div style="flex:1;">
+          <label>Expiración:</label>
+          <input type="text" placeholder="MM/AA" style="width:100%; padding:8px; border-radius:8px;">
+        </div>
+        <div style="flex:1;">
+          <label>CVV:</label>
+          <input type="text" placeholder="123" style="width:100%; padding:8px; border-radius:8px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------- PAGO YAPE QR ---------------- -->
+    <div id="yapeForm" style="display:none; text-align:center;">
+      <p>Escanea el código QR para pagar con Yape</p>
+      <img src="https://i.imgur.com/5QFQF5P.png" 
+           alt="QR Yape" 
+           style="width:220px; border-radius:15px;">
+      <p style="margin-top:10px; font-weight:bold;">Número Yape: 987 654 321</p>
+    </div>
+
+    <button onclick="finalizePayment()" style="
+        margin-top:25px; width:100%; padding:12px; font-size:16px;
+        background:#ff6a00; color:#fff; border:none; border-radius:10px;
+        cursor:pointer;">
+      Confirmar Pago
+    </button>
+  </div>
+</div>
+
+<script>
+  // Abrir modal
+  function openPaymentModal() {
+    document.getElementById("paymentModal").style.display = "flex";
+  }
+
+  // Cerrar modal
+  function closePaymentModal() {
+    document.getElementById("paymentModal").style.display = "none";
+  }
+
+  // Alternar método de pago
+  function togglePaymentMethod() {
+    const method = document.getElementById("paymentMethod").value;
+    document.getElementById("cardForm").style.display = method === "card" ? "block" : "none";
+    document.getElementById("yapeForm").style.display = method === "yape" ? "block" : "none";
+  }
+
+  // Finalizar pago
+  function finalizePayment() {
+    alert("¡Pago realizado con éxito! Gracias por confiar en SOLANA");
+    closePaymentModal();
+  }
+</script>
+
 </body>
 </html>
+
